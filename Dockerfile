@@ -31,7 +31,7 @@ ADD start.sh /go/src/github.com/mindoc-org/mindoc
 
 
 # Ubuntu 22.04
-FROM ubuntu:jammy
+FROM ubuntu:22.04
 
 # 切换默认shell为bash
 SHELL ["/bin/bash", "-c"]
@@ -41,25 +41,6 @@ COPY --from=build /go/src/github.com/mindoc-org/mindoc /mindoc
 WORKDIR /mindoc
 RUN chmod a+r /usr/share/fonts/win/simsun.ttc
 
-# 备份原有源
-RUN mv /etc/apt/sources.list /etc/apt/sources.list-backup
-# 最小化源，缩短apt update时间(ca-certificates必须先安装才支持换tsinghua源)
-RUN echo 'deb http://archive.ubuntu.com/ubuntu/ jammy main restricted' > /etc/apt/sources.list
-RUN apt-get update
-RUN apt install -y ca-certificates
-# 更换aliyun源(echo多行内容不能以#开头，会被docker误判为注释行，所以采用\n#开头)
-RUN echo $'\
-deb http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse\
-\n# deb-src http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse\n\
-deb http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse\
-\n# deb-src http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse\n\
-deb http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse\
-\n# deb-src http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse\n\
-deb http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse\
-\n# deb-src http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse\n\
-deb http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse\
-\n# deb-src http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse'\
-> /etc/apt/sources.list
 
 # 更新软件包信息
 RUN apt-get update
