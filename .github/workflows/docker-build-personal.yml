@@ -8,6 +8,9 @@ on:
         required: true
         default: 'personal-build'
         type: string
+  push:
+    branches: 
+      - "personal-build"
 
 jobs:
   docker:
